@@ -1,16 +1,47 @@
-# React + Vite
+# SpotScout
+**API-first restaurant finder (portfolio project)**
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+SpotScout helps you quickly find restaurants in any city by searching real business data and displaying clean, readable results with proper loading / error / empty states.
 
-Currently, two official plugins are available:
+## Live Demo
+- **Deployed app:** <https://spotscout-e3u1m1v1p-brunas-projects-7a3fa527.vercel.app/>
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Why I Built This
+I built SpotScout to demonstrate real-world front-end development patterns that are directly transferable to production apps:
+- API-driven UI with resilient UX states
+- secure API key handling (no secrets in the browser)
+- clean separation between UI, services, and serverless backend
+- deploy + iteration workflow
 
-## React Compiler
+## Key Features (MVP)
+- Search restaurants by **city** + optional keyword (e.g., “sushi”)
+- Real-time results from the **Yelp Fusion API**
+- Clear UI states:
+  - idle
+  - loading
+  - empty results
+  - error + retry
+- Serverless API proxy to keep credentials secure
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Tech Stack
+- **React + Vite**
+- **Vercel Serverless Functions** (`/api/search`)
+- **Yelp Fusion API**
+- Deployed on **Vercel**
 
-## Expanding the ESLint configuration
+## Architecture (Real-World Pattern)
+Because the Yelp API key must remain private, the frontend never calls Yelp directly.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+**Flow:**
+1. React UI calls `/api/search?city=...&term=...`
+2. Vercel serverless function (`api/search.js`) calls Yelp using `YELP_API_KEY`
+3. Server returns a sanitized response back to the UI
+
+This mirrors how production apps integrate with 3rd-party APIs safely.
+
+## Getting Started (Local Development)
+
+### 1) Install
+```bash
+npm install   
+```
