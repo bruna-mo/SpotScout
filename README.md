@@ -22,6 +22,8 @@ I built SpotScout to demonstrate real-world front-end development patterns that 
   - empty results
   - error + retry
 - Serverless API proxy to keep credentials secure
+- Save/unsave restaurants (localStorage)
+- Saved list page for quick access
 
 ## Tech Stack
 - **React + Vite**
