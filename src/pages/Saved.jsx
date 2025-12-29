@@ -1,51 +1,101 @@
+// src/pages/Saved.jsx
 import { useEffect, useState } from "react";
-import { getSaved, removeRestaurant } from "../utils/storage";
+import { removeRestaurant, getSavedRestaurants } from "../utils/storage";
 
 export default function Saved() {
   const [saved, setSaved] = useState([]);
 
   useEffect(() => {
-    setSaved(getSaved());
+    setSaved(getSavedRestaurants());
   }, []);
 
   const onRemove = (id) => {
     removeRestaurant(id);
-    setSaved(getSaved());
+    setSaved(getSavedRestaurants());
   };
 
   return (
-    <div style={{ maxWidth: 760, margin: "0 auto", padding: 24, fontFamily: "system-ui" }}>
-      <header style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-        <h1 style={{ marginBottom: 6 }}>Saved</h1>
-        <a href="/" style={{ fontSize: 14 }}>← Back to search</a>
-      </header>
-
-      <p style={{ marginTop: 0 }}>Restaurants you’ve saved.</p>
-
-      {saved.length === 0 ? (
-        <p>No saved restaurants yet. Go search and hit “Save”.</p>
-      ) : (
-        <div style={{ display: "grid", gap: 12 }}>
-          {saved.map((r) => (
-            <div key={r.id} style={{ border: "1px solid #ddd", borderRadius: 12, padding: 12 }}>
-              <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
-                <strong>{r.name}</strong>
-                <button type="button" onClick={() => onRemove(r.id)}>
-                  Remove
-                </button>
-              </div>
-
-              <p style={{ margin: "6px 0" }}>{r.location}</p>
-
-              {r.url && (
-                <a href={r.url} target="_blank" rel="noreferrer">
-                  View on Yelp
-                </a>
-              )}
-            </div>
-          ))}
+    <div className="container">
+      {/* Header */}
+      <div className="header">
+        <div className="brand">
+          <h1>SpotScout</h1>
+          <p>Your saved restaurants</p>
         </div>
-      )}
+
+        <nav className="nav">
+          <a href="/">Search</a>
+          <a href="/saved">Saved</a>
+        </nav>
+      </div>
+
+      {/* Content */}
+      <div className="panel">
+        {saved.length === 0 ? (
+          <p className="muted">
+            You haven’t saved any restaurants yet.
+          </p>
+        ) : (
+          <div className="grid">
+            {saved.map((r) => (
+              <div key={r.id} className="card">
+                {r.image_url && (
+                  <img
+                    src={r.image_url}
+                    alt={r.name}
+                    className="thumb"
+                  />
+                )}
+
+                <div className="cardBody">
+                  <div className="row">
+                    <div style={{ display: "grid", gap: 4 }}>
+                      <strong>{r.name}</strong>
+                      <span className="muted" style={{ fontSize: 13 }}>
+                        {r.rating ? `⭐ ${r.rating}` : ""}
+                        {r.review_count
+                          ? ` • ${r.review_count} reviews`
+                          : ""}
+                        {r.price ? ` • ${r.price}` : ""}
+                      </span>
+                    </div>
+
+                    <button
+                      className="btn btnSecondary"
+                      type="button"
+                      onClick={() => onRemove(r.id)}
+                    >
+                      Remove
+                    </button>
+                  </div>
+
+                  <p className="muted" style={{ margin: "10px 0 0" }}>
+                    {r.location}
+                  </p>
+
+                  {(r.categories || []).length > 0 && (
+                    <div className="chips">
+                      {(r.categories || []).slice(0, 4).map((c) => (
+                        <span key={c} className="chip">
+                          {c}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
+                  {r.url && (
+                    <div style={{ marginTop: 12 }}>
+                      <a href={r.url} target="_blank" rel="noreferrer">
+                        View on Yelp
+                      </a>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

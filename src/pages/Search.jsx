@@ -1,3 +1,4 @@
+// src/pages/Search.jsx
 import { useState } from "react";
 import { searchRestaurants } from "../services/api";
 import { isSaved, saveRestaurant, removeRestaurant } from "../utils/storage";
@@ -38,119 +39,133 @@ export default function Search() {
   };
 
   return (
-    <div
-      style={{
-        maxWidth: 760,
-        margin: "0 auto",
-        padding: 24,
-        fontFamily: "system-ui",
-      }}
-    >
-      <h1 style={{ marginBottom: 6 }}>SpotScout</h1>
-      <p style={{ marginTop: 0 }}>Find restaurants in any city.</p>
-      <p style={{ marginTop: 0 }}>
-        <a href="/saved">View saved</a>
-      </p>
+    <div className="container">
+      <div className="header">
+        <div className="brand">
+          <h1>SpotScout</h1>
+          <p>Find restaurants in any city.</p>
+        </div>
 
-      <form
-        onSubmit={onSearch}
-        style={{ display: "grid", gap: 10, maxWidth: 520 }}
-      >
-        <label style={{ display: "grid", gap: 6 }}>
-          City
-          <input
-            value={city}
-            onChange={(e) => setCity(e.target.value)}
-            placeholder="Vancouver"
-          />
-        </label>
+        <nav className="nav">
+          <a href="/">Search</a>
+          <a href="/saved">Saved</a>
+        </nav>
+      </div>
 
-        <label style={{ display: "grid", gap: 6 }}>
-          Keyword (optional)
-          <input
-            value={term}
-            onChange={(e) => setTerm(e.target.value)}
-            placeholder="sushi, pizza..."
-          />
-        </label>
+      <div className="panel">
+        <div className="formCenter">
+        <form onSubmit={onSearch} className="form">
+          <label>
+            City
+            <input
+              value={city}
+              onChange={(e) => setCity(e.target.value)}
+              placeholder="Vancouver"
+            />
+          </label>
 
-        <button type="submit" disabled={status === "loading"}>
-          {status === "loading" ? "Searching..." : "Search"}
-        </button>
-      </form>
+          <label>
+            Keyword (optional)
+            <input
+              value={term}
+              onChange={(e) => setTerm(e.target.value)}
+              placeholder="sushi, pizza..."
+            />
+          </label>
 
-      <div style={{ marginTop: 16 }}>
-        {status === "idle" && <p>Enter a city to start.</p>}
-        {status === "loading" && <p>Loading…</p>}
-        {status === "empty" && (
-          <p>No restaurants found. Try another keyword.</p>
-        )}
-        {status === "error" && (
-          <>
-            <p>
-              <strong>Error:</strong> {error}
-            </p>
-            <button onClick={onSearch} type="button">
-              Retry
-            </button>
-          </>
-        )}
+          <button
+            className="btn btnPrimary"
+            type="submit"
+            disabled={status === "loading"}
+          >
+            {status === "loading" ? "Searching..." : "Search"}
+          </button>
+        </form>
+        </div>
+        <div style={{ marginTop: 16 }}>
+          {status === "idle" && <p className="muted" style={{ textAlign: "center" }}>Enter a city to start.</p>}
+          {status === "loading" && <p className="muted">Loading…</p>}
+          {status === "empty" && (
+            <p className="muted">No restaurants found. Try another keyword.</p>
+          )}
 
-        {status === "success" && (
-          <div style={{ display: "grid", gap: 12 }}>
-            {results.map((r) => {
-                const saved = isSaved(r.id) 
-                return(
-              <div
-                key={r.id}
-                style={{
-                  border: "1px solid #ddd",
-                  borderRadius: 12,
-                  padding: 12,
-                }}
-              >
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    gap: 12,
-                    alignItems: "center",
-                  }}
-                >
-                  <strong>{r.name}</strong>
-
-                  <div
-                    style={{ display: "flex", gap: 10, alignItems: "center" }}
-                  >
-                    <span>{r.rating ? `⭐ ${r.rating}` : ""}</span>
-
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const savedNow = isSaved(r.id);
-                        if (savedNow) removeRestaurant(r.id);
-                        else saveRestaurant(r);
-
-                        // button text updates
-                        setResults((prev) => [...prev]);
-                      }}
-                    >
-                      {isSaved(r.id) ? "★ Saved" : "☆ Save"}
-                    </button>
-                  </div>
-                </div>
-
-                <p style={{ margin: "6px 0" }}>{r.location}</p>
-                {r.url && (
-                  <a href={r.url} target="_blank" rel="noreferrer">
-                    View on Yelp
-                  </a>
-                )}
+          {status === "error" && (
+            <div className="card" style={{ marginTop: 12 }}>
+              <div className="cardBody">
+                <p style={{ marginTop: 0 }}>
+                  <strong>Error:</strong> {error}
+                </p>
+                <button className="btn btnSecondary" onClick={onSearch} type="button">
+                  Retry
+                </button>
               </div>
+            </div>
+          )}
+
+          {status === "success" && (
+            <div className="grid">
+              {results.map((r) => {
+                const saved = isSaved(r.id);
+
+                return (
+                  <div key={r.id} className="card">
+                    {r.image_url && (
+                      <img className="thumb" src={r.image_url} alt={r.name} />
+                    )}
+
+                    <div className="cardBody">
+                      <div className="row">
+                        <div style={{ display: "grid", gap: 4 }}>
+                          <strong>{r.name}</strong>
+                          <span className="muted" style={{ fontSize: 13 }}>
+                            {r.rating ? `⭐ ${r.rating}` : ""}
+                            {r.review_count ? ` • ${r.review_count} reviews` : ""}
+                            {r.price ? ` • ${r.price}` : ""}
+                          </span>
+                        </div>
+
+                        <button
+                          className={`btn ${saved ? "btnPrimary" : "btnSecondary"}`}
+                          type="button"
+                          onClick={() => {
+                            if (saved) removeRestaurant(r.id);
+                            else saveRestaurant(r);
+
+                            setResults((prev) => [...prev]);
+                          }}
+                        >
+                          {saved ? "★ Saved" : "☆ Save"}
+                        </button>
+                      </div>
+
+                      <p className="muted" style={{ margin: "10px 0 0" }}>
+                        {r.location}
+                      </p>
+
+                      {(r.categories || []).length > 0 && (
+                        <div className="chips">
+                          {(r.categories || []).slice(0, 4).map((c) => (
+                            <span key={c} className="chip">
+                              {c}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+
+                      {r.url && (
+                        <div style={{ marginTop: 12 }}>
+                          <a href={r.url} target="_blank" rel="noreferrer">
+                            View on Yelp
+                          </a>
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 );
-            })}
-          </div>
-        )}
+              })}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
