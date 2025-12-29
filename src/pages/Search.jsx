@@ -1,4 +1,3 @@
-// src/pages/Search.jsx
 import { useState } from "react";
 import { searchRestaurants } from "../services/api";
 import { isSaved, saveRestaurant, removeRestaurant } from "../utils/storage";
