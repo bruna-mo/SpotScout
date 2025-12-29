@@ -1,17 +1,17 @@
-// src/pages/Saved.jsx
 import { useEffect, useState } from "react";
-import { removeRestaurant, getSavedRestaurants } from "../utils/storage";
+import { removeRestaurant, getSaved } from "../utils/storage";
+import { Link } from "react-router-dom";
 
 export default function Saved() {
   const [saved, setSaved] = useState([]);
 
   useEffect(() => {
-    setSaved(getSavedRestaurants());
+    setSaved(getSaved());
   }, []);
 
   const onRemove = (id) => {
     removeRestaurant(id);
-    setSaved(getSavedRestaurants());
+    setSaved(getSaved());
   };
 
   return (
@@ -24,8 +24,8 @@ export default function Saved() {
         </div>
 
         <nav className="nav">
-          <a href="/">Search</a>
-          <a href="/saved">Saved</a>
+          <Link to="/">Search</Link>
+          <Link to="/saved">Saved</Link>
         </nav>
       </div>
 
